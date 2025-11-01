@@ -10,18 +10,34 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Comexamplegoldnet">
+        android:theme="@style/Theme.GoldNet"
+        tools:targetApi="31">
+
+        <!-- Pantalla principal (Login) -->
         <activity
-            android:name=".MainActivity"
-            android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.Comexamplegoldnet">
+            android:name=".view.LoginActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Pantalla de registro -->
+        <activity android:name=".view.RegisterActivity" />
+
+        <!-- Pantalla de inicio o menú principal -->
+        <activity android:name=".view.HomeActivity" />
+
+        <!-- Pantalla de detalle de producto -->
+        <activity android:name=".view.ProductDetailActivity" />
+
+        <!-- Pantalla de historial de compras -->
+        <activity android:name=".view.PurchaseHistoryActivity" />
+
+        <!-- (Opcional) Pantalla para perfil de usuario -->
+        <activity android:name=".view.ProfileActivity" />
+
     </application>
 
 </manifest>

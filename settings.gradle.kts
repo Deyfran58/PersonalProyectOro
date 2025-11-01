@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "com.example.goldnet"
+rootProject.name = "GoldNet"
 include(":app")
  
