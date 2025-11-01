@@ -1,33 +1,22 @@
-package com.example.goldnet.controllers
+package com.example.goldnet
 
-import com.example.goldnet.data.model.User
-import com.example.goldnet.data.repository.DataManager
-import com.example.goldnet.util.Util
-import java.util.UUID
+import androidx.media3.common.util.Util
 
-class UserController(private val dataManager: DataManager) {
+class UserController(private val userManager: MemoryDataManager<User>) {
 
-    suspend fun register(name: String, email: String, passwordPlain: String): Result<User> {
-        if (name.isBlank() || email.isBlank() || passwordPlain.length < 4) {
-            return Result.failure(IllegalArgumentException("Datos inválidos"))
-        }
-
-        val existing = dataManager.getUserByEmail(email)
-        if (existing != null) return Result.failure(IllegalStateException("Email ya registrado"))
-
-        val user = User(
-            id = UUID.randomUUID().toString(),
-            name = name.trim(),
-            email = email.trim().lowercase(),
-            passwordHash = Util.hashPassword(passwordPlain)
-        )
-        val ok = dataManager.createUser(user)
-        return if (ok) Result.success(user) else Result.failure(RuntimeException("No se pudo crear usuario"))
+    fun register(name: String, email: String, password: String): User {
+        require(Util.equals(email)) { "Invalid email" }
+        val id = Util.generateId()
+        val hash = Util.hashPassword(password)
+        val user = User(id, name, email, hash)
+        userManager.add(user)
+        return user
     }
 
-    suspend fun login(email: String, passwordPlain: String): Result<User> {
-        val user = dataManager.authenticate(email.trim().lowercase(), passwordPlain)
-            ?: return Result.failure(IllegalArgumentException("Credenciales incorrectas"))
-        return Result.success(user)
+    fun login(email: String, password: String): User? {
+        return userManager.getAll().firstOrNull {
+            it.email.equals(email, ignoreCase = true) &&
+                    Util.hashPassword(password) == it.passwordHash
+        }
     }
 }
