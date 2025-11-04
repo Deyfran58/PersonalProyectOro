@@ -1,4 +1,4 @@
-package com.example.examplegoldnet
+package com.example.goldnet
 
 import org.junit.Test
 

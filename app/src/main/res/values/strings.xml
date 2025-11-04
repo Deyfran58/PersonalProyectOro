@@ -1,3 +1,43 @@
 <resources>
-    <string name="app_name">com.example.goldnet</string>
+    <string name="app_name">GoldNet</string>
+    <string name="login_title">Iniciar sesion</string>
+    <string name="email_hint">Correo</string>
+    <string name="password_hint">Contraseña</string>
+    <string name="login_button">Acceso</string>
+    <string name="register_link">" 31 / 5.000 ¿No tienes una cuenta? Regístrate"</string>
+    <string name="product_list_title">Productos disponibles</string>
+    <string name="purchase_history_title">"Mis compras "</string>
+    <string name="email">Correo\n</string>
+    <string name="password">Contraseña\n</string>
+    <string name="login">Acceso\n</string>
+    <string name="no_account_register">No registrado\n</string>
+    <string name="full_name">Nombre completo</string>
+    <string name="confirm_password">Confirmar contraseña</string>
+    <string name="register">Registrar</string>
+    <string name="search_hint">Buscar\n</string>
+    <string name="buy_now">Comprar ahora</string>
+    <string name="purchase_history" translatable="false">Historial de compra\n</string>
+    <string name="logout" translatable="false">Salir</string>
+    <string name="welcome_message" translatable="false">Bienvenido</string>
+    <string name="invalid_credentials">Credenciales invalidos\n</string>
+    <string name="success_purchase" />
+    <string name="email_example_com">email@example.com</string>
+    <string name="registration_success" translatable="false">Registration successful</string>
+
+    <!-- Product list -->
+    <string name="products" translatable="false">Products</string>
+    <string name="price" translatable="false">Price</string>
+    <string name="karat" translatable="false">Karat</string>
+    <string name="add_to_cart" translatable="false">Add to cart</string>
+    <string name="no_purchases" translatable="false">You have no purchases yet</string>
+
+    <!-- Profile -->
+    <string name="profile" translatable="false">Profile</string>
+
+    <!-- General -->
+    <string name="ok" translatable="false">OK</string>
+    <string name="cancel">Cancel</string>
+
+
+
 </resources>
