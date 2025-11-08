@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/gold_gradient_background"
+    android:padding="24dp">
+
+    <LinearLayout
+        android:id="@+id/main"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nuestros Productos"
+            android:textSize="36sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:layout_gravity="center"
+            android:layout_marginBottom="32dp"
+            android:shadowColor="#000000"
+            android:shadowDx="3"
+            android:shadowDy="3"
+            android:shadowRadius="6" />
+
+        <!-- PRODUCT 1: Real Chain 10K -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="122dp"
+            android:layout_marginBottom="28dp"
+            android:backgroundTint="#CC1A1A1A"
+            app:cardCornerRadius="32dp"
+            app:cardElevation="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:padding="20dp">
+
+                <ImageView
+                    android:layout_width="121dp"
+                    android:layout_height="83dp"
+                    android:layout_marginEnd="20dp"
+                    android:background="@drawable/circle_gold"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/oro1" />
+
+                <LinearLayout
+                    android:layout_width="151dp"
+                    android:layout_height="97dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Cadena Real 10K"
+                        android:textColor="#FFD700"
+                        android:textSize="10sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="192dp"
+                        android:layout_height="29dp"
+                        android:layout_marginTop="8dp"
+                        android:lineSpacingExtra="4dp"
+                        android:shadowColor="#000000"
+                        android:shadowDx="2"
+                        android:shadowDy="2"
+                        android:shadowRadius="4"
+                        android:text="Una cadena clásica y elegante, elaborada en oro de 10 quilates."
+                        android:textColor="#FFFFFF"
+                        android:textSize="10sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="₡120.000"
+                        android:textColor="#FFFFFF"
+                        android:textSize="10sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnAdd1"
+                    android:layout_width="68dp"
+                    android:layout_height="84dp"
+                    android:layout_marginStart="20dp"
+                    android:backgroundTint="#D32F2F"
+                    android:elevation="8dp"
+                    android:text="+"
+                    android:textColor="#FFFFFF"
+                    android:textSize="28sp"
+                    app:cornerRadius="50dp" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- PRODUCT 2: 18K Imperial Chain -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="122dp"
+            android:layout_marginBottom="28dp"
+            android:backgroundTint="#CC1A1A1A"
+            app:cardCornerRadius="32dp"
+            app:cardElevation="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:padding="20dp">
+
+                <ImageView
+                    android:layout_width="121dp"
+                    android:layout_height="83dp"
+                    android:layout_marginEnd="20dp"
+                    android:background="@drawable/circle_gold"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/oro2" />
+
+                <LinearLayout
+                    android:layout_width="151dp"
+                    android:layout_height="97dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Cadena Imperial 18K"
+                        android:textColor="#FFD700"
+                        android:textSize="10sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="192dp"
+                        android:layout_height="29dp"
+                        android:layout_marginTop="8dp"
+                        android:lineSpacingExtra="4dp"
+                        android:shadowColor="#000000"
+                        android:shadowDx="2"
+                        android:shadowDy="2"
+                        android:shadowRadius="4"
+                        android:text="Diseño fino y tono dorado intenso, joya de admiración."
+                        android:textColor="#FFFFFF"
+                        android:textSize="10sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="₡250.000"
+                        android:textColor="#FFFFFF"
+                        android:textSize="10sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnAdd2"
+                    android:layout_width="68dp"
+                    android:layout_height="84dp"
+                    android:layout_marginStart="20dp"
+                    android:backgroundTint="#D32F2F"
+                    android:elevation="8dp"
+                    android:text="+"
+                    android:textColor="#FFFFFF"
+                    android:textSize="28sp"
+                    app:cornerRadius="50dp" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- PRODUCT 3: 18K Gold Sun Chain -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="122dp"
+            android:layout_marginBottom="28dp"
+            android:backgroundTint="#CC1A1A1A"
+            app:cardCornerRadius="32dp"
+            app:cardElevation="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:padding="20dp">
+
+                <ImageView
+                    android:layout_width="121dp"
+                    android:layout_height="83dp"
+                    android:layout_marginEnd="20dp"
+                    android:background="@drawable/circle_gold"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/oro3" />
+
+                <LinearLayout
+                    android:layout_width="151dp"
+                    android:layout_height="97dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Cadena Sol Dorado 18K"
+                        android:textColor="#FFD700"
+                        android:textSize="10sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="192dp"
+                        android:layout_height="29dp"
+                        android:layout_marginTop="8dp"
+                        android:lineSpacingExtra="4dp"
+                        android:shadowColor="#000000"
+                        android:shadowDx="2"
+                        android:shadowDy="2"
+                        android:shadowRadius="4"
+                        android:text="Inspirada en el sol, brillo intenso y diseño moderno."
+                        android:textColor="#FFFFFF"
+                        android:textSize="10sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="₡275.000"
+                        android:textColor="#FFFFFF"
+                        android:textSize="10sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnAdd3"
+                    android:layout_width="68dp"
+                    android:layout_height="84dp"
+                    android:layout_marginStart="20dp"
+                    android:backgroundTint="#D32F2F"
+                    android:elevation="8dp"
+                    android:text="+"
+                    android:textColor="#FFFFFF"
+                    android:textSize="28sp"
+                    app:cornerRadius="50dp" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- MENU BUTTON: RETURN TO DASHBOARD -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnMenu"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:text="Menú"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#7C4DFF"
+            app:cornerRadius="50dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginStart="40dp"
+            android:layout_marginEnd="40dp"
+            android:elevation="12dp"
+            app:icon="@drawable/ic_menu"
+            app:iconGravity="textStart"
+            app:iconTint="#FFFFFF"
+            app:iconPadding="20dp" />
+
+    </LinearLayout>
+</ScrollView>
