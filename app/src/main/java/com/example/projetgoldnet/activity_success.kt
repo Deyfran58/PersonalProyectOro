@@ -6,24 +6,27 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.google.android.material.button.MaterialButton
+import com.example.projetgoldnet.databinding.ActivitySuccessBinding
 
-class ReviewsActivity : AppCompatActivity() {
+class SuccessActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivitySuccessBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_reviews)
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+        binding = ActivitySuccessBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
-        val btnMenu = findViewById<MaterialButton>(R.id.btnMenu)
-        btnMenu.setOnClickListener {
-            val intent = Intent(this, DashboardActivity::class.java)
-            startActivity(intent)
+        binding.btnBackToProducts.setOnClickListener {
+            startActivity(Intent(this, ProductsActivity::class.java))
             finish()
         }
     }

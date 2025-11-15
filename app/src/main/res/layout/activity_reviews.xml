@@ -91,7 +91,7 @@
                     android:id="@+id/tvComment1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="¡El oro 18K es hermoso! Brilla increíble."
+                    android:text="Muy buen oro, dan fiado?"
                     android:textSize="15sp"
                     android:textColor="#333333"
                     android:layout_marginTop="8dp" />
@@ -203,7 +203,7 @@
                     android:id="@+id/tvComment3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Envío rápido y oro puro. ¡Recomendado!"
+                    android:text="Muy buen oro, a mi marido le va a cuadrar"
                     android:textSize="15sp"
                     android:textColor="#333333"
                     android:layout_marginTop="8dp" />

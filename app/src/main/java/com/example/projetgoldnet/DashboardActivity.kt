@@ -11,6 +11,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.button.MaterialButton
 
 class DashboardActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -23,30 +24,30 @@ class DashboardActivity : AppCompatActivity() {
             insets
         }
 
-        // DISPLAY USERNAME
         val username = intent.getStringExtra("USERNAME") ?: "Usuario"
         findViewById<TextView>(R.id.tvWelcome).text = "¡Bienvenido, $username!"
 
-        // BUTTON: PRODUCTS
         findViewById<MaterialButton>(R.id.btnMisPedidos).setOnClickListener {
             startActivity(Intent(this, ProductsActivity::class.java))
         }
 
-        // BUTTON: REVIEWS
         findViewById<MaterialButton>(R.id.btnResenas).setOnClickListener {
             startActivity(Intent(this, ReviewsActivity::class.java))
         }
 
-        // BUTTON: MY CART
         findViewById<MaterialButton>(R.id.btnNotificaciones).setOnClickListener {
-             startActivity(Intent(this, Cart_Activity::class.java))
-         }
+            startActivity(Intent(this, Cart_Activity::class.java))
+        }
 
-        // BUTTON: LOG OUT
+        findViewById<MaterialButton>(R.id.btnViewUsers).setOnClickListener {
+            startActivity(Intent(this, UserListActivity::class.java))
+        }
+
         findViewById<MaterialButton>(R.id.btnCerrarSesion).setOnClickListener {
             Toast.makeText(this, "¡Sesión cerrada!", Toast.LENGTH_LONG).show()
-            val intent = Intent(this, MainActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            val intent = Intent(this, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            }
             startActivity(intent)
             finish()
         }

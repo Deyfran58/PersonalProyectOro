@@ -4,22 +4,31 @@ import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.button.MaterialButton
+import de.hdodenhof.circleimageview.CircleImageView
+import java.io.File
+import java.io.ByteArrayOutputStream
 import java.util.*
 
 class RegisterActivity : AppCompatActivity() {
 
-
+    // === VIEWS ===
     private lateinit var etId: EditText
     private lateinit var etNombre: EditText
     private lateinit var etPrimerApellido: EditText
@@ -33,16 +42,38 @@ class RegisterActivity : AppCompatActivity() {
     private lateinit var etDireccion: EditText
     private lateinit var etContrasena: EditText
     private lateinit var etConfirmarContrasena: EditText
-
-    // === BOTONES SUPERIORES ===
+    private lateinit var ivProfilePhoto: CircleImageView
+    private lateinit var btnAddPhoto: ImageButton
     private lateinit var btnSave: MaterialButton
     private lateinit var btnUpdate: MaterialButton
     private lateinit var btnDelete: MaterialButton
     private lateinit var tvTitle: android.widget.TextView
 
-    // === ESTADO ===
     private var isEditMode = false
     private var currentUserId = ""
+    private var currentBitmap: Bitmap? = null
+    private var photoUri: Uri = Uri.EMPTY  // NO NULLABLE
+
+    // === LAUNCHERS ===
+    private val galleryLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        uri?.let { loadImageFromUri(it) }
+    }
+
+    private val cameraLauncher = registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+        if (success) {
+            val bitmap = BitmapFactory.decodeStream(contentResolver.openInputStream(photoUri))
+            currentBitmap = bitmap
+            ivProfilePhoto.setImageBitmap(bitmap)
+            saveToGallery(photoUri)
+            toast("¡Foto guardada en galería!")
+        } else {
+            toast("Error al tomar la foto")
+        }
+    }
+
+    private val cameraPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        if (granted) openCamera() else toast("Permiso de cámara denegado")
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,7 +90,6 @@ class RegisterActivity : AppCompatActivity() {
         setupToolbar()
         setupListeners()
 
-        // === EDIT MODE FROM DASHBOARD ===
         intent.getStringExtra("EDIT_USER_ID")?.let { id ->
             etId.setText(id)
             searchUser(id)
@@ -80,7 +110,8 @@ class RegisterActivity : AppCompatActivity() {
         etDireccion = findViewById(R.id.etDireccion)
         etContrasena = findViewById(R.id.etContrasena)
         etConfirmarContrasena = findViewById(R.id.etConfirmarContrasena)
-
+        ivProfilePhoto = findViewById(R.id.ivProfilePhoto)
+        btnAddPhoto = findViewById(R.id.btnAddPhoto)
         btnSave = findViewById(R.id.btnSave)
         btnUpdate = findViewById(R.id.btnUpdate)
         btnDelete = findViewById(R.id.btnDelete)
@@ -88,7 +119,7 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun setupToolbar() {
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowTitleEnabled(false)
@@ -98,41 +129,69 @@ class RegisterActivity : AppCompatActivity() {
         findViewById<ImageButton>(R.id.btnCalendar).setOnClickListener { showDatePicker() }
         etFechaNacimiento.setOnClickListener { showDatePicker() }
 
-        // === LUPA BUSCA AL TOCAR ===
         findViewById<ImageButton>(R.id.btnSearch).setOnClickListener {
             val id = etId.text.toString().trim()
-            if (id.isEmpty()) {
-                toast("Ingresa una cédula para buscar")
-            } else {
-                searchUser(id)
-            }
+            if (id.isEmpty()) toast("Ingresa una cédula") else searchUser(id)
         }
+
+        btnAddPhoto.setOnClickListener { showImagePickerDialog() }
 
         btnSave.setOnClickListener { createUser() }
         btnUpdate.setOnClickListener { showUpdateDialog() }
         btnDelete.setOnClickListener { showDeleteDialog() }
     }
 
+    private fun showImagePickerDialog() {
+        val options = arrayOf("Cámara", "Galería")
+        AlertDialog.Builder(this)
+            .setTitle("Seleccionar foto")
+            .setItems(options) { _, which ->
+                when (which) {
+                    0 -> openCamera()
+                    1 -> galleryLauncher.launch("image/*")
+                }
+            }
+            .show()
+    }
+
+    private fun openCamera() {
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            val photoFile = File.createTempFile("photo_${System.currentTimeMillis()}", ".jpg", externalCacheDir)
+            photoUri = FileProvider.getUriForFile(this, "${packageName}.provider", photoFile)
+            cameraLauncher.launch(photoUri)
+        } else {
+            cameraPermissionLauncher.launch(android.Manifest.permission.CAMERA)
+        }
+    }
+
+    private fun saveToGallery(uri: Uri) {
+        val bitmap = BitmapFactory.decodeStream(contentResolver.openInputStream(uri))
+        MediaStore.Images.Media.insertImage(contentResolver, bitmap, "GoldNet_User_${System.currentTimeMillis()}", "Foto de perfil")
+    }
+
+    private fun loadImageFromUri(uri: Uri) {
+        try {
+            val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, uri)
+            currentBitmap = bitmap
+            ivProfilePhoto.setImageBitmap(bitmap)
+        } catch (e: Exception) {
+            toast("Error al cargar imagen")
+        }
+    }
+
     private fun createUser() {
         if (!validateFields()) return
         val id = etId.text.toString().trim()
-
         if (prefs.contains(id)) {
             toast("Esta cédula ya está registrada")
             return
         }
-
         saveUser(id)
         toast("¡Cuenta creada exitosamente!")
         goToDashboard()
     }
 
     private fun searchUser(id: String) {
-        if (id.isEmpty()) {
-            toast("Ingresa una cédula para buscar")
-            return
-        }
-
         if (!prefs.contains(id)) {
             toast("Usuario no encontrado")
             clearFields()
@@ -141,8 +200,8 @@ class RegisterActivity : AppCompatActivity() {
         }
 
         val data = prefs.getString(id, "")!!.split("|")
-        if (data.size < 11) {
-            toast("Datos incompletos. Registra de nuevo.")
+        if (data.size < 12) {
+            toast("Datos incompletos")
             return
         }
 
@@ -159,15 +218,22 @@ class RegisterActivity : AppCompatActivity() {
         etContrasena.setText(data[10])
         etConfirmarContrasena.setText(data[10])
 
+        if (data[11].isNotEmpty()) {
+            val imageBytes = android.util.Base64.decode(data[11], android.util.Base64.DEFAULT)
+            val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+            ivProfilePhoto.setImageBitmap(bitmap)
+            currentBitmap = bitmap
+        }
+
         currentUserId = id
         setEditMode(true)
-        toast("Usuario encontrado. Edita y actualiza.")
+        toast("Usuario encontrado")
     }
 
     private fun updateUser() {
         if (!validateFields()) return
         saveUser(currentUserId)
-        toast("¡Cuenta actualizada exitosamente!")
+        toast("Cuenta actualizada")
         goToDashboard()
     }
 
@@ -180,37 +246,42 @@ class RegisterActivity : AppCompatActivity() {
 
     private fun showUpdateDialog() {
         AlertDialog.Builder(this)
-            .setTitle("Actualizar Cuenta")
-            .setMessage("¿Deseas guardar los cambios?")
+            .setTitle("Actualizar")
+            .setMessage("¿Guardar cambios?")
             .setPositiveButton("Sí") { _, _ -> updateUser() }
-            .setNegativeButton("Cancelar", null)
+            .setNegativeButton("No", null)
             .show()
     }
 
     private fun showDeleteDialog() {
         AlertDialog.Builder(this)
-            .setTitle("Eliminar Cuenta")
-            .setMessage("¿Estás seguro de eliminar esta cuenta permanentemente?")
-            .setPositiveButton("Eliminar") { _, _ -> deleteUser() }
-            .setNegativeButton("Cancelar", null)
+            .setTitle("Eliminar")
+            .setMessage("¿Eliminar permanentemente?")
+            .setPositiveButton("Sí") { _, _ -> deleteUser() }
+            .setNegativeButton("No", null)
             .show()
     }
 
-    private val prefs get() = getSharedPreferences("users", Context.MODE_PRIVATE)
-
     private fun saveUser(id: String) {
+        val imageBase64 = if (currentBitmap != null) {
+            val stream = ByteArrayOutputStream()
+            currentBitmap!!.compress(Bitmap.CompressFormat.JPEG, 80, stream)
+            android.util.Base64.encodeToString(stream.toByteArray(), android.util.Base64.DEFAULT)
+        } else ""
+
         val data = listOf(
-            etNombre.text.toString(),
-            etPrimerApellido.text.toString(),
-            etSegundoApellido.text.toString(),
-            etFechaNacimiento.text.toString(),
-            etCorreo.text.toString(),
-            etTelefono.text.toString(),
-            etProvincia.text.toString(),
-            etCanton.text.toString(),
-            etDistrito.text.toString(),
-            etDireccion.text.toString(),
-            etContrasena.text.toString()
+            etNombre.text.toString().trim(),
+            etPrimerApellido.text.toString().trim(),
+            etSegundoApellido.text.toString().trim(),
+            etFechaNacimiento.text.toString().trim(),
+            etCorreo.text.toString().trim(),
+            etTelefono.text.toString().trim(),
+            etProvincia.text.toString().trim(),
+            etCanton.text.toString().trim(),
+            etDistrito.text.toString().trim(),
+            etDireccion.text.toString().trim(),
+            etContrasena.text.toString(),
+            imageBase64
         ).joinToString("|")
 
         prefs.edit().putString(id, data).apply()
@@ -232,19 +303,19 @@ class RegisterActivity : AppCompatActivity() {
         val confirmar = etConfirmarContrasena.text.toString()
 
         return when {
-            id.isEmpty() -> { toast("Ingresa tu cédula"); false }
-            nombre.isEmpty() -> { toast("Ingresa tu nombre"); false }
+            id.isEmpty() -> { toast("Ingresa cédula"); false }
+            nombre.isEmpty() -> { toast("Ingresa nombre"); false }
             pApellido.isEmpty() -> { toast("Ingresa primer apellido"); false }
             sApellido.isEmpty() -> { toast("Ingresa segundo apellido"); false }
-            fecha.isEmpty() || fecha == "dd/mm/aaaa" -> { toast("Selecciona fecha de nacimiento"); false }
-            correo.isEmpty() -> { toast("Ingresa tu correo"); false }
+            fecha.isEmpty() || fecha == "dd/mm/aaaa" -> { toast("Selecciona fecha"); false }
+            correo.isEmpty() -> { toast("Ingresa correo"); false }
             !android.util.Patterns.EMAIL_ADDRESS.matcher(correo).matches() -> { toast("Correo inválido"); false }
-            telefono.length != 8 || !telefono.all { it.isDigit() } -> { toast("Teléfono debe tener 8 dígitos"); false }
+            telefono.length != 8 || !telefono.all { it.isDigit() } -> { toast("Teléfono: 8 dígitos"); false }
             provincia.isEmpty() -> { toast("Ingresa provincia"); false }
             canton.isEmpty() -> { toast("Ingresa cantón"); false }
             distrito.isEmpty() -> { toast("Ingresa distrito"); false }
             direccion.isEmpty() -> { toast("Ingresa dirección"); false }
-            contrasena.length < 6 -> { toast("Contraseña muy corta (mín. 6)"); false }
+            contrasena.length < 6 -> { toast("Contraseña mínima 6 caracteres"); false }
             contrasena != confirmar -> { toast("Las contraseñas no coinciden"); false }
             else -> true
         }
@@ -267,11 +338,13 @@ class RegisterActivity : AppCompatActivity() {
 
     private fun clearFields() {
         listOf(
-            etId, etNombre, etPrimerApellido, etSegundoApellido,
-            etCorreo, etTelefono, etProvincia, etCanton,
-            etDistrito, etDireccion, etContrasena, etConfirmarContrasena
+            etId, etNombre, etPrimerApellido, etSegundoApellido, etCorreo, etTelefono,
+            etProvincia, etCanton, etDistrito, etDireccion, etContrasena, etConfirmarContrasena
         ).forEach { it.text.clear() }
         etFechaNacimiento.hint = "dd/mm/aaaa"
+        ivProfilePhoto.setImageResource(R.drawable.ic_profile_placeholder)
+        currentBitmap = null
+        photoUri = Uri.EMPTY
     }
 
     private fun goToDashboard() {
@@ -283,9 +356,7 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun toast(msg: String) = Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+    override fun onSupportNavigateUp(): Boolean { finish(); return true }
 
-    override fun onSupportNavigateUp(): Boolean {
-        finish()
-        return true
-    }
+    private val prefs get() = getSharedPreferences("users", Context.MODE_PRIVATE)
 }
