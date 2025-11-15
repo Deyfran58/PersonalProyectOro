@@ -3,6 +3,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.projetgoldnet">
 
+    <!-- PERMISOS NECESARIOS -->
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -14,7 +23,17 @@
         android:theme="@style/Theme.ProjetGoldNet"
         tools:targetApi="31">
 
-        <!-- MAIN ACTIVITY - LA QUE SE ABRE AL INICIAR LA APP -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <!-- MAIN ACTIVITY - PANTALLA DE INICIO -->
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -24,29 +43,40 @@
             </intent-filter>
         </activity>
 
-        <!-- DASHBOARD - PANTALLA PRINCIPAL DESPUÉS DEL LOGIN -->
+        <!-- DASHBOARD -->
         <activity
             android:name=".DashboardActivity"
             android:exported="false" />
 
-        <!-- PRODUCTOS - DONDE ESTÁN LAS CADENAS -->
+        <!-- PRODUCTOS -->
         <activity
             android:name=".ProductsActivity"
             android:exported="false" />
 
-        <!-- CARRITO - MI CARRITO -->
+        <!-- CARRITO -->
         <activity
             android:name=".Cart_Activity"
             android:exported="false" />
 
-        <!-- REGISTRO - CREAR CUENTA -->
+        <!-- REGISTRO -->
         <activity
             android:name=".RegisterActivity"
             android:exported="false" />
 
-        <!-- RESEÑAS - OPINIONES DE CLIENTES -->
+        <!-- RESEÑAS -->
         <activity
             android:name=".ReviewsActivity"
+            android:exported="false" />
+
+        <!-- LISTA DE USUARIOS -->
+        <activity
+            android:name=".UserListActivity"
+            android:exported="false"
+            android:label="Usuarios Registrados" />
+
+
+        <activity
+            android:name=".SuccessActivity"
             android:exported="false" />
 
     </application>

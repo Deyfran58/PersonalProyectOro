@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F8F9FA"
+    android:background="#FFD700"
     android:padding="24dp">
-
-
 
     <TextView
         android:id="@+id/tvLogo"
@@ -17,6 +14,7 @@
         android:text="GoldNet"
         android:textSize="48sp"
         android:textColor="#4A148C"
+        android:textStyle="bold"
         android:fontFamily="sans-serif-medium"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -36,6 +34,7 @@
         android:layout_marginTop="16dp" />
 
     <LinearLayout
+        android:id="@+id/buttonContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -72,15 +71,29 @@
             style="@style/Widget.MaterialComponents.Button"
             android:layout_width="280dp"
             android:layout_height="56dp"
+            android:layout_marginBottom="16dp"
             android:backgroundTint="#7C4DFF"
             android:text="Mi carrito"
             android:textColor="#FFFFFF"
             app:cornerRadius="50dp" />
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnViewUsers"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="280dp"
+            android:layout_height="56dp"
+            android:layout_marginBottom="16dp"
+            android:text="Ver Usuarios"
+            android:textColor="#7C4DFF"
+            app:strokeColor="#7C4DFF"
+            app:icon="@drawable/ic_people"
+            app:iconTint="#7C4DFF"
+            app:cornerRadius="50dp" />
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnCerrarSesion"
             style="@style/Widget.MaterialComponents.Button"
-            android:layout_width="match_parent"
+            android:layout_width="280dp"
             android:layout_height="60dp"
             android:text="Cerrar Sesión"
             android:textSize="18sp"
@@ -89,13 +102,11 @@
             android:backgroundTint="#D32F2F"
             app:cornerRadius="50dp"
             android:layout_marginTop="40dp"
-            android:layout_marginStart="40dp"
-            android:layout_marginEnd="40dp"
-            android:elevation="10dp"
             app:icon="@drawable/ic_logout"
             app:iconGravity="textStart"
             app:iconTint="#FFFFFF"
-            app:iconPadding="16dp" />
+            app:iconPadding="16dp"
+            android:elevation="10dp" />
 
     </LinearLayout>
 
