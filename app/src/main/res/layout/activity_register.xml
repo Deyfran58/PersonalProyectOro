@@ -5,7 +5,6 @@
     android:layout_height="match_parent"
     android:background="#F8F9FA">
 
-    <!-- BARRA DE ACCIONES -->
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
@@ -13,75 +12,69 @@
         android:background="#7C4DFF"
         android:elevation="8dp">
 
-        <!-- TOOLBAR -->
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:title="Registro"
-            app:titleTextColor="#FFD700"
-            app:navigationIcon="@drawable/ic_arrow_back"
+            android:layout_height="116dp"
             app:navigationContentDescription="Volver"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+            app:navigationIcon="@drawable/ic_arrow_back"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            app:title="Registro"
+            app:titleTextColor="#FFD700">
 
-            <!-- BOTONES DERECHA -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="end"
+                android:layout_marginEnd="16dp"
                 android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:layout_marginEnd="16dp">
+                android:orientation="horizontal">
 
-                <!-- GUARDAR -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnSave"
                     style="@style/Widget.MaterialComponents.Button.Icon"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:layout_marginEnd="8dp"
-                    app:icon="@drawable/ic_save"
-                    app:iconSize="24dp"
-                    app:iconTint="#FFD700"
                     android:backgroundTint="#00000000"
                     android:contentDescription="Guardar"
-                    android:tooltipText="Guardar cuenta" />
+                    android:tooltipText="Guardar cuenta"
+                    app:icon="@drawable/ic_save"
+                    app:iconSize="24dp"
+                    app:iconTint="#FFD700" />
 
-                <!-- ACTUALIZAR -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnUpdate"
                     style="@style/Widget.MaterialComponents.Button.Icon"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:layout_marginEnd="8dp"
+                    android:backgroundTint="#00000000"
+                    android:contentDescription="Actualizar"
+                    android:tooltipText="Actualizar datos"
+                    android:visibility="gone"
                     app:icon="@drawable/ic_update"
                     app:iconSize="24dp"
-                    app:iconTint="#FFD700"
-                    android:backgroundTint="#00000000"
-                    android:visibility="gone"
-                    android:contentDescription="Actualizar"
-                    android:tooltipText="Actualizar datos" />
+                    app:iconTint="#FFD700" />
 
-                <!-- ELIMINAR -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnDelete"
                     style="@style/Widget.MaterialComponents.Button.Icon"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:layout_marginEnd="8dp"
+                    android:backgroundTint="#00000000"
+                    android:contentDescription="Eliminar"
+                    android:tooltipText="Eliminar cuenta"
+                    android:visibility="gone"
                     app:icon="@drawable/ic_delete"
                     app:iconSize="24dp"
-                    app:iconTint="#FFD700"
-                    android:backgroundTint="#00000000"
-                    android:visibility="gone"
-                    android:contentDescription="Eliminar"
-                    android:tooltipText="Eliminar cuenta" />
+                    app:iconTint="#FFD700" />
 
             </LinearLayout>
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- CONTENIDO -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -108,6 +101,35 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="12dp" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginBottom="24dp">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/ivProfilePhoto"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:src="@drawable/ic_profile_placeholder"
+                    app:civ_border_width="4dp"
+                    app:civ_border_color="#FFD700" />
+
+                <ImageButton
+                    android:id="@+id/btnAddPhoto"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_alignEnd="@id/ivProfilePhoto"
+                    android:layout_alignBottom="@id/ivProfilePhoto"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="@drawable/circle_gold"
+                    android:src="@drawable/ic_camera"
+                    app:tint="#000000"
+                    android:contentDescription="Cambiar foto" />
+
+            </RelativeLayout>
 
             <!-- Título dinámico -->
             <TextView
@@ -201,7 +223,6 @@
                     android:textSize="15sp" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Fecha de Nacimiento -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -238,7 +259,6 @@
                     android:contentDescription="Calendario" />
             </LinearLayout>
 
-            <!-- Correo -->
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
@@ -254,7 +274,6 @@
                     android:textSize="15sp" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Teléfono -->
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
@@ -270,7 +289,6 @@
                     android:textSize="15sp" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Ubicación -->
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
@@ -312,7 +330,6 @@
                     android:hint="* Distrito"
                     android:textSize="15sp" />
             </com.google.android.material.textfield.TextInputLayout>
-
 
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"

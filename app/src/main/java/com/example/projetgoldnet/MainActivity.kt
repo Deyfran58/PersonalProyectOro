@@ -61,7 +61,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // === BOTÓN CREAR CUENTA ===
         btnRegister.setOnClickListener {
             startActivity(Intent(this, RegisterActivity::class.java))
         }
