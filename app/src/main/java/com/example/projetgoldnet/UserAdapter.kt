@@ -1,5 +1,7 @@
 package com.example.projetgoldnet
 
+import android.graphics.BitmapFactory
+import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,10 +24,21 @@ class UserAdapter(private val users: List<User>) : RecyclerView.Adapter<UserAdap
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val user = users[position]
-        holder.tvName.text = user.fullName
-        holder.tvEmail.text = user.email
-        user.photoBitmap?.let { holder.ivPhoto.setImageBitmap(it) }
-            ?: holder.ivPhoto.setImageResource(R.drawable.ic_profile_placeholder)
+
+        holder.tvName.text = "${user.nombre} ${user.primerApellido} ${user.segundoApellido}"
+        holder.tvEmail.text = user.correo
+
+        if (user.fotoPerfil.isNotEmpty()) {
+            try {
+                val bytes = Base64.decode(user.fotoPerfil, android.util.Base64.DEFAULT)
+                val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                holder.ivPhoto.setImageBitmap(bitmap)
+            } catch (e: Exception) {
+                holder.ivPhoto.setImageResource(R.drawable.ic_profile_placeholder)
+            }
+        } else {
+            holder.ivPhoto.setImageResource(R.drawable.ic_profile_placeholder)
+        }
     }
 
     override fun getItemCount() = users.size
