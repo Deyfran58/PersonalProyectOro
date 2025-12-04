@@ -2,7 +2,6 @@ package com.example.projetgoldnet
 
 import android.app.AlertDialog
 import android.app.DatePickerDialog
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -20,10 +19,12 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.button.MaterialButton
 import de.hdodenhof.circleimageview.CircleImageView
-import java.io.File
+import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
+import java.io.File
 import java.util.*
 
 class RegisterActivity : AppCompatActivity() {
@@ -52,7 +53,7 @@ class RegisterActivity : AppCompatActivity() {
     private var isEditMode = false
     private var currentUserId = ""
     private var currentBitmap: Bitmap? = null
-    private var photoUri: Uri = Uri.EMPTY  // NO NULLABLE
+    private var photoUri: Uri = Uri.EMPTY
 
     // === LAUNCHERS ===
     private val galleryLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
@@ -179,69 +180,145 @@ class RegisterActivity : AppCompatActivity() {
         }
     }
 
+    // === CRUD CON RETROFIT ===
     private fun createUser() {
         if (!validateFields()) return
-        val id = etId.text.toString().trim()
-        if (prefs.contains(id)) {
-            toast("Esta cédula ya está registrada")
-            return
+
+        val imageBase64 = if (currentBitmap != null) {
+            val stream = ByteArrayOutputStream()
+            currentBitmap!!.compress(Bitmap.CompressFormat.JPEG, 80, stream)
+            android.util.Base64.encodeToString(stream.toByteArray(), android.util.Base64.DEFAULT)
+        } else ""
+
+        val user = User(
+            cedula = etId.text.toString().trim(),
+            nombre = etNombre.text.toString().trim(),
+            primerApellido = etPrimerApellido.text.toString().trim(),
+            segundoApellido = etSegundoApellido.text.toString().trim(),
+            fechaNacimiento = etFechaNacimiento.text.toString().trim(),
+            correo = etCorreo.text.toString().trim(),
+            telefono = etTelefono.text.toString().trim(),
+            provincia = etProvincia.text.toString().trim(),
+            canton = etCanton.text.toString().trim(),
+            distrito = etDistrito.text.toString().trim(),
+            direccion = etDireccion.text.toString().trim(),
+            contrasena = etContrasena.text.toString(),
+            fotoPerfil = imageBase64
+        )
+
+        lifecycleScope.launch {
+            try {
+                val response = RetrofitClient.apiService.registerUser(user)
+                if (response.isSuccessful && response.body()?.success == true) {
+                    toast("¡Cuenta creada exitosamente!")
+                    goToDashboard()
+                } else {
+                    toast(response.body()?.message ?: "Esta cédula ya está registrada")
+                }
+            } catch (e: Exception) {
+                toast("Error de conexión: ${e.message}")
+            }
         }
-        saveUser(id)
-        toast("¡Cuenta creada exitosamente!")
-        goToDashboard()
     }
 
-    private fun searchUser(id: String) {
-        if (!prefs.contains(id)) {
-            toast("Usuario no encontrado")
-            clearFields()
-            setEditMode(false)
-            return
+    private fun searchUser(cedula: String) {
+        lifecycleScope.launch {
+            try {
+                val response = RetrofitClient.apiService.getUser(cedula)
+                if (response.isSuccessful && response.body()?.success == true) {
+                    val user = response.body()!!.user!!
+
+                    etNombre.setText(user.nombre)
+                    etPrimerApellido.setText(user.primerApellido)
+                    etSegundoApellido.setText(user.segundoApellido)
+                    etFechaNacimiento.setText(user.fechaNacimiento)
+                    etCorreo.setText(user.correo)
+                    etTelefono.setText(user.telefono)
+                    etProvincia.setText(user.provincia)
+                    etCanton.setText(user.canton)
+                    etDistrito.setText(user.distrito)
+                    etDireccion.setText(user.direccion)
+                    etContrasena.setText(user.contrasena)
+                    etConfirmarContrasena.setText(user.contrasena)
+
+                    // CARGAR FOTO
+                    if (user.fotoPerfil.isNotEmpty()) {
+                        val imageBytes = android.util.Base64.decode(user.fotoPerfil, android.util.Base64.DEFAULT)
+                        val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+                        ivProfilePhoto.setImageBitmap(bitmap)
+                        currentBitmap = bitmap
+                    } else {
+                        ivProfilePhoto.setImageResource(R.drawable.ic_profile_placeholder)
+                        currentBitmap = null
+                    }
+
+                    currentUserId = cedula
+                    setEditMode(true)
+                    toast("Usuario encontrado")
+                } else {
+                    toast("Usuario no encontrado")
+                    clearFields()
+                    setEditMode(false)
+                }
+            } catch (e: Exception) {
+                toast("Error de conexión")
+            }
         }
-
-        val data = prefs.getString(id, "")!!.split("|")
-        if (data.size < 12) {
-            toast("Datos incompletos")
-            return
-        }
-
-        etNombre.setText(data[0])
-        etPrimerApellido.setText(data[1])
-        etSegundoApellido.setText(data[2])
-        etFechaNacimiento.setText(data[3])
-        etCorreo.setText(data[4])
-        etTelefono.setText(data[5])
-        etProvincia.setText(data[6])
-        etCanton.setText(data[7])
-        etDistrito.setText(data[8])
-        etDireccion.setText(data[9])
-        etContrasena.setText(data[10])
-        etConfirmarContrasena.setText(data[10])
-
-        if (data[11].isNotEmpty()) {
-            val imageBytes = android.util.Base64.decode(data[11], android.util.Base64.DEFAULT)
-            val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
-            ivProfilePhoto.setImageBitmap(bitmap)
-            currentBitmap = bitmap
-        }
-
-        currentUserId = id
-        setEditMode(true)
-        toast("Usuario encontrado")
     }
 
     private fun updateUser() {
         if (!validateFields()) return
-        saveUser(currentUserId)
-        toast("Cuenta actualizada")
-        goToDashboard()
+
+        val imageBase64 = if (currentBitmap != null) {
+            val stream = ByteArrayOutputStream()
+            currentBitmap!!.compress(Bitmap.CompressFormat.JPEG, 80, stream)
+            android.util.Base64.encodeToString(stream.toByteArray(), android.util.Base64.DEFAULT)
+        } else ""
+
+        val user = User(
+            cedula = currentUserId,
+            nombre = etNombre.text.toString().trim(),
+            primerApellido = etPrimerApellido.text.toString().trim(),
+            segundoApellido = etSegundoApellido.text.toString().trim(),
+            fechaNacimiento = etFechaNacimiento.text.toString().trim(),
+            correo = etCorreo.text.toString().trim(),
+            telefono = etTelefono.text.toString().trim(),
+            provincia = etProvincia.text.toString().trim(),
+            canton = etCanton.text.toString().trim(),
+            distrito = etDistrito.text.toString().trim(),
+            direccion = etDireccion.text.toString().trim(),
+            contrasena = etContrasena.text.toString(),
+            fotoPerfil = imageBase64
+        )
+
+        lifecycleScope.launch {
+            try {
+                val response = RetrofitClient.apiService.updateUser(currentUserId, user)
+                if (response.isSuccessful && response.body()?.success == true) {
+                    toast("¡Cuenta actualizada exitosamente!")
+                    goToDashboard()
+                } else {
+                    toast("Error al actualizar")
+                }
+            } catch (e: Exception) {
+                toast("Error de conexión")
+            }
+        }
     }
 
     private fun deleteUser() {
-        prefs.edit().remove(currentUserId).apply()
-        toast("Cuenta eliminada")
-        clearFields()
-        setEditMode(false)
+        lifecycleScope.launch {
+            try {
+                val response = RetrofitClient.apiService.deleteUser(currentUserId)
+                if (response.isSuccessful && response.body()?.success == true) {
+                    toast("Cuenta eliminada")
+                    clearFields()
+                    setEditMode(false)
+                }
+            } catch (e: Exception) {
+                toast("Error al eliminar")
+            }
+        }
     }
 
     private fun showUpdateDialog() {
@@ -260,31 +337,6 @@ class RegisterActivity : AppCompatActivity() {
             .setPositiveButton("Sí") { _, _ -> deleteUser() }
             .setNegativeButton("No", null)
             .show()
-    }
-
-    private fun saveUser(id: String) {
-        val imageBase64 = if (currentBitmap != null) {
-            val stream = ByteArrayOutputStream()
-            currentBitmap!!.compress(Bitmap.CompressFormat.JPEG, 80, stream)
-            android.util.Base64.encodeToString(stream.toByteArray(), android.util.Base64.DEFAULT)
-        } else ""
-
-        val data = listOf(
-            etNombre.text.toString().trim(),
-            etPrimerApellido.text.toString().trim(),
-            etSegundoApellido.text.toString().trim(),
-            etFechaNacimiento.text.toString().trim(),
-            etCorreo.text.toString().trim(),
-            etTelefono.text.toString().trim(),
-            etProvincia.text.toString().trim(),
-            etCanton.text.toString().trim(),
-            etDistrito.text.toString().trim(),
-            etDireccion.text.toString().trim(),
-            etContrasena.text.toString(),
-            imageBase64
-        ).joinToString("|")
-
-        prefs.edit().putString(id, data).apply()
     }
 
     private fun validateFields(): Boolean {
@@ -357,6 +409,4 @@ class RegisterActivity : AppCompatActivity() {
 
     private fun toast(msg: String) = Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
     override fun onSupportNavigateUp(): Boolean { finish(); return true }
-
-    private val prefs get() = getSharedPreferences("users", Context.MODE_PRIVATE)
 }
